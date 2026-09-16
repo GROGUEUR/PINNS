@@ -49,7 +49,7 @@ src/viz.py        heatmaps, courbes                                    [B]
 scripts/          evaluate.py, ablation.py                             [B]
 app.py            Gradio                                               [B]
 tests/            pytest
-docs/             physics.md (adimensionnement), lectures.md (fiches de lecture)
+docs/             physics.md (adimensionnement), lectures.md (fiches de lecture), walkthrough/ (un par sprint et par auteur)
 checkpoints/      modèles (ignorés par Git sauf demo_*.pt)
 results/          métriques et figures (.npz ignorés par Git)
 ```

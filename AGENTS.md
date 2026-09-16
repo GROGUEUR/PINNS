@@ -82,6 +82,7 @@ Python ≥ 3.10. Le code doit tourner **sur CPU** (GPU optionnel via `config.DEV
 .
 ├── AGENTS.md  ROADMAP.md  README.md  requirements.txt
 ├── docs/physics.md        # dérivation de l'adimensionnement (LaTeX)
+├── docs/walkthrough/      # un walkthrough par sprint et par auteur (voir § 5, « Fin de sprint »)
 ├── src/
 │   ├── config.py          # constantes physiques + hyperparamètres (dataclass unique)
 │   ├── geometry.py        # objet (disque/pavé), IC lissée θ₀_ε            [A]
@@ -157,6 +158,8 @@ def pde_residual(model: nn.Module, xyt: torch.Tensor, t_star_max: float) -> torc
 - Pas de `.item()` ni de `.cpu()` dans la boucle chaude, sauf pour le log tous les K pas.
 - Solveur DF vectorisé par slicing NumPy (aucune boucle sur les nœuds).
 
+**Fin de sprint : walkthrough obligatoire.** Chaque auteur rédige `docs/walkthrough/walkthrough_sprint_<n>_<A|B>.md` (exemple : `walkthrough_sprint_1_A.md`) avant la PR de fin de sprint. Contenu attendu : périmètre, ordre du travail, fonction par fonction avec les lignes clés et le **pourquoi**, constantes ajoutées, tests et régression que chacun attraperait, décisions à valider par l'autre, mesures faites, passage de relais, questions d'examinateur « doigt sur la ligne ». Le relecteur s'en sert pour l'explain-back.
+
 **Commits** (Conventional Commits, en français) : `feat(physics): résidu EDP par autograd`, `fix(fd): pas de temps CFL`, `docs: …`, `test: …`.
 Une PR = une fonctionnalité, relue par l'autre membre du binôme.
 
@@ -230,14 +233,14 @@ Toute modification de cette table doit être validée par le binôme puis report
 
 ---
 
-## 10. État d'avancement (à mettre à jour à chaque fin de sprint)
+## 10. État d'avancement (à mettre à jour à chaque fin de sprint, avec le walkthrough de § 5)
 
 **Dernière mise à jour :** 2026-09-16 — par : Claude (assistant IA), à valider par le binôme
 
 | Sprint | Contenu | Statut |
 |---|---|---|
 | 0 | Setup dépôt, config, lecture articles | ◐ code fait (arborescence, `requirements.txt`, `src/config.py` + tests, `docs/lectures.md`). Reste : lecture des articles par A et B, protection de `main` sur GitHub (voir README) |
-| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ◐ A fait le 2026-09-16 (`docs/physics.md`, `geometry.py`, `sampling.py`, tests) · B à faire (`fd_solver.py`, `test_fd.py`) |
+| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ◐ A fait le 2026-09-16 (`docs/physics.md`, `geometry.py`, `sampling.py`, tests, `docs/walkthrough/walkthrough_sprint_1_A.md`) · B à faire (`fd_solver.py`, `test_fd.py`) |
 | 2 | PINN baseline [A] · Métriques, viz, evaluate [B] → **M1** | ☐ |
 | 3 | L-BFGS, hard constraints [A] · RAD, poids dynamiques, ablation [B] → **M2** | ☐ |
 | 4 | PINN paramétrique [A] · Gradio [B] → **M3** | ☐ |
