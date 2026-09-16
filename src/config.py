@@ -66,6 +66,10 @@ class Config:
     # τ = u^TAU_EXPONENT avec u ~ U[0, 1] : concentre les points près de τ = 0,
     # là où se joue toute la dynamique (θ_max passe de 1 à 0.39 en 5 % du temps).
     TAU_EXPONENT: float = 2.0
+    # Densification de l'IC autour du bord de l'objet, là où θ₀_ε varie vite :
+    # une part IC_EDGE_FRACTION des N_IC points est tirée dans la bande |d − R| ≤ ic_edge_band.
+    IC_EDGE_FRACTION: float = 0.5
+    IC_EDGE_BAND_EPS: float = 3.0  # demi-largeur de la bande en multiples de EPS_IC (tanh(3) ≈ 0.995)
 
     # ------------------------------------------------------------------
     # 5. Réseau et perte (travail 2 du sujet, Éq. 4)
@@ -145,6 +149,11 @@ class Config:
         return self.T_OBJ - self.T_AMB
 
     @property
+    def ic_edge_band(self) -> float:
+        """Demi-largeur (sans dim) de la bande de densification de l'IC : IC_EDGE_BAND_EPS · ε."""
+        return self.IC_EDGE_BAND_EPS * self.EPS_IC
+
+    @property
     def fd_dx(self) -> float:
         """Pas d'espace adimensionné de la grille DF (1/100)."""
         return 1.0 / (self.FD_N - 1)
@@ -162,6 +171,12 @@ class Config:
         # Piège § 7 : le schéma explicite FTCS 2D diverge si dt* > dx²/4.
         if self.FD_CFL_FACTOR > 0.25:
             raise ValueError(f"FD_CFL_FACTOR = {self.FD_CFL_FACTOR} > 0.25 : schéma FTCS instable")
+
+        # L'échantillonnage BC répartit les points à parts égales sur les 4 murs.
+        if self.N_BC % 4 != 0:
+            raise ValueError(f"N_BC = {self.N_BC} doit être un multiple de 4 (4 murs)")
+        if not 0.0 <= self.IC_EDGE_FRACTION <= 1.0:
+            raise ValueError(f"IC_EDGE_FRACTION = {self.IC_EDGE_FRACTION} doit être dans [0, 1]")
 
         # L'objet doit tenir dans la pièce, sinon l'IC (θ = 1) contredit la BC (θ = 0).
         r = self.OBJECT_RADIUS

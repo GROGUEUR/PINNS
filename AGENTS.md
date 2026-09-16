@@ -237,7 +237,7 @@ Toute modification de cette table doit être validée par le binôme puis report
 | Sprint | Contenu | Statut |
 |---|---|---|
 | 0 | Setup dépôt, config, lecture articles | ◐ code fait (arborescence, `requirements.txt`, `src/config.py` + tests, `docs/lectures.md`). Reste : lecture des articles par A et B, protection de `main` sur GitHub (voir README) |
-| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ☐ |
+| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ◐ A fait le 2026-09-16 (`docs/physics.md`, `geometry.py`, `sampling.py`, tests) · B à faire (`fd_solver.py`, `test_fd.py`) |
 | 2 | PINN baseline [A] · Métriques, viz, evaluate [B] → **M1** | ☐ |
 | 3 | L-BFGS, hard constraints [A] · RAD, poids dynamiques, ablation [B] → **M2** | ☐ |
 | 4 | PINN paramétrique [A] · Gradio [B] → **M3** | ☐ |
@@ -250,6 +250,7 @@ Toute modification de cette table doit être validée par le binôme puis report
 
 - [ ] Forme par défaut de l'objet : disque (R = 0.1) ou pavé (côté 0.2) ? _Défaut provisoire dans `config.py` : disque, R = 0.1 (cas mesuré au § 2)._
 - [ ] Paramètres variables dans la démo : (R, cx, cy) ou seulement R ?
+- [ ] Densification de l'IC (choix de A, à valider par B) : 50 % des points IC tirés par rejet dans la bande |d − R| ≤ 3ε (`IC_EDGE_FRACTION`, `IC_EDGE_BAND_EPS`), τ uniforme pour la BC.
 
 **Bloquants actuels :** _(aucun)_
 
