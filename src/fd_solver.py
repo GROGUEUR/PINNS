@@ -14,7 +14,7 @@ import time
 import numpy as np
 
 from src.config import CFG, set_seeds
-from src.geometry import theta_0_np, theta_to_T
+from src.geometry import initial_condition_grid, theta_to_celsius
 
 def run_fd_solver(custom_theta_0=None) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Exécute le solveur FTCS et renvoie les résultats.
@@ -54,7 +54,7 @@ def run_fd_solver(custom_theta_0=None) -> tuple[np.ndarray, np.ndarray, np.ndarr
     if custom_theta_0 is not None:
         theta = custom_theta_0(X, Y)
     else:
-        theta = theta_0_np(X, Y)
+        theta = initial_condition_grid()
         
     # Appliquer la condition aux limites (Dirichlet = 0 sur les bords)
     theta[0, :] = 0
@@ -89,7 +89,8 @@ def run_fd_solver(custom_theta_0=None) -> tuple[np.ndarray, np.ndarray, np.ndarr
             save_idx += 1
             
     # 5. Conversion en températures physiques
-    T_save = theta_to_T(theta_save)
+    import torch
+    T_save = theta_to_celsius(torch.from_numpy(theta_save)).numpy()
     
     return t_save, X, Y, theta_save, T_save
 
