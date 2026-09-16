@@ -48,3 +48,12 @@ def test_set_seeds_rend_les_tirages_reproductibles() -> None:
     b_torch, b_np = torch.rand(3), np.random.rand(3)
     assert torch.equal(a_torch, b_torch)
     assert np.array_equal(a_np, b_np)
+
+
+def test_n_bc_non_multiple_de_4_est_refuse() -> None:
+    with pytest.raises(ValueError):
+        replace(CFG, N_BC=4001)
+
+
+def test_bande_ic_est_un_multiple_de_epsilon() -> None:
+    assert CFG.ic_edge_band == pytest.approx(CFG.IC_EDGE_BAND_EPS * CFG.EPS_IC)
