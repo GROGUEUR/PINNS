@@ -1,0 +1,6 @@
+# Dépendances du projet (AGENTS.md § 1, règle 5 : rien de plus sans accord du binôme).
+torch>=2.0
+numpy>=1.24
+matplotlib>=3.7
+gradio>=4.0
+pytest>=7.0

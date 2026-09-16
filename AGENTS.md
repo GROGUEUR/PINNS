@@ -232,11 +232,11 @@ Toute modification de cette table doit être validée par le binôme puis report
 
 ## 10. État d'avancement (à mettre à jour à chaque fin de sprint)
 
-**Dernière mise à jour :** AAAA-MM-JJ — par : ___
+**Dernière mise à jour :** 2026-09-16 — par : Claude (assistant IA), à valider par le binôme
 
 | Sprint | Contenu | Statut |
 |---|---|---|
-| 0 | Setup dépôt, config, lecture articles | ☐ à faire |
+| 0 | Setup dépôt, config, lecture articles | ◐ code fait (arborescence, `requirements.txt`, `src/config.py` + tests, `docs/lectures.md`). Reste : lecture des articles par A et B, protection de `main` sur GitHub (voir README) |
 | 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ☐ |
 | 2 | PINN baseline [A] · Métriques, viz, evaluate [B] → **M1** | ☐ |
 | 3 | L-BFGS, hard constraints [A] · RAD, poids dynamiques, ablation [B] → **M2** | ☐ |
@@ -248,7 +248,7 @@ Toute modification de cette table doit être validée par le binôme puis report
 
 **Décisions en attente :**
 
-- [ ] Forme par défaut de l'objet : disque (R = 0.1) ou pavé (côté 0.2) ?
+- [ ] Forme par défaut de l'objet : disque (R = 0.1) ou pavé (côté 0.2) ? _Défaut provisoire dans `config.py` : disque, R = 0.1 (cas mesuré au § 2)._
 - [ ] Paramètres variables dans la démo : (R, cx, cy) ou seulement R ?
 
 **Bloquants actuels :** _(aucun)_

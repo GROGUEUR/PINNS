@@ -1,0 +1,18 @@
+# Environnement Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# Artefacts lourds (AGENTS.md § 9) : ni checkpoints ni .npz volumineux dans Git.
+# Exception : les modèles de démo, nommés checkpoints/demo_*.pt (AGENTS.md § 4).
+checkpoints/*
+!checkpoints/.gitkeep
+!checkpoints/demo_*.pt
+results/*.npz
+
+# Outils locaux des assistants IA
+.remember/
+.claude/settings.local.json
