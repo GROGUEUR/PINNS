@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 import torch
 
-from src.config import CFG, set_seeds
+from src.config import CFG, config_from_dict, config_to_dict, set_seeds
 
 
 def test_temps_caracteristique_vaut_50000_s() -> None:
@@ -57,3 +57,12 @@ def test_n_bc_non_multiple_de_4_est_refuse() -> None:
 
 def test_bande_ic_est_un_multiple_de_epsilon() -> None:
     assert CFG.ic_edge_band == pytest.approx(CFG.IC_EDGE_BAND_EPS * CFG.EPS_IC)
+
+
+def test_config_dict_aller_retour() -> None:
+    cfg = replace(CFG, OBJECT_SHAPE="pave", HIDDEN_LAYERS=(8, 8), EPS_IC=0.02)
+    fields = config_to_dict(cfg)
+    # torch.load(weights_only=True), le défaut de torch ≥ 2.6, refuse les objets Path
+    assert isinstance(fields["CHECKPOINT_DIR"], str)
+    assert isinstance(fields["RESULTS_DIR"], str)
+    assert config_from_dict(fields) == cfg

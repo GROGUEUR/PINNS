@@ -21,16 +21,29 @@ pytest -q
 Astuce Windows/OneDrive : créer le `.venv` **hors** du dossier synchronisé (ou l'exclure de
 la synchronisation), sinon OneDrive tente de synchroniser des milliers de fichiers.
 
+Astuce Windows/conda : ne pas lancer le projet depuis un Python conda où numpy vient de conda
+et torch de pip. Les deux embarquent un runtime OpenMP, et `pytest` s'arrête net avec
+« OMP: Error #15 ». Le venv pip ci-dessus évite le problème.
+
 ## Commandes
 
 ```bash
 pytest -q                                  # tests (doivent passer avant tout commit)
 python -m src.fd_solver                    # référence DF  → results/fd_reference.npz   (sprint 1)
-python -m src.train --mode soft            # PINN baseline                                (sprint 2)
+python -m src.train --mode soft            # PINN baseline, 20 000 itérations Adam        (sprint 2)
+python -m src.train --mode soft --adam-iters 200 --name essai   # essai rapide          (sprint 2)
 python -m src.train --mode hard            # hard constraints                             (sprint 3)
 python -m scripts.evaluate --ckpt checkpoints/<nom>.pt                                 # (sprint 2)
 python -m scripts.ablation                 # tableau comparatif                           (sprint 3)
 python app.py                              # démonstrateur Gradio                         (sprint 4)
+```
+
+Durée d'entraînement sur CPU : environ 0,34 s par itération Adam avec les 29 000 points par défaut
+(i5-1240P), soit près de 2 h pour la baseline. Sur un processeur hybride (cœurs performance et
+cœurs efficaces), fixer `OMP_NUM_THREADS` au nombre de cœurs performance accélère d'environ 20 % :
+
+```bash
+OMP_NUM_THREADS=4 python -m src.train --mode soft      # Git Bash ; PowerShell : $env:OMP_NUM_THREADS=4
 ```
 
 ## Arborescence

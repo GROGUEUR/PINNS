@@ -74,6 +74,8 @@ python app.py                            # démonstrateur Gradio
 
 Python ≥ 3.10. Le code doit tourner **sur CPU** (GPU optionnel via `config.DEVICE`).
 
+**Environnement :** un venv pip dédié, hors du dossier OneDrive. Ne pas utiliser un Python conda où numpy vient de conda (MKL) et torch de pip : les deux runtimes OpenMP entrent en conflit et `pytest` s'arrête net (« OMP: Error #15 »). Ne pas contourner avec `KMP_DUPLICATE_LIB_OK=TRUE`, documenté par Intel comme pouvant donner des résultats faux.
+
 ---
 
 ## 4. Arborescence et responsabilités
@@ -130,7 +132,7 @@ def pde_residual(model: nn.Module, xyt: torch.Tensor, t_star_max: float) -> torc
     Returns:
         Résidu, forme (N, 1). Vaut 0 si l'EDP est parfaitement satisfaite.
     """
-    xyt = xyt.requires_grad_(True)            # on dérive θ par rapport aux ENTRÉES
+    xyt = xyt.detach().requires_grad_(True)   # on dérive θ par rapport aux ENTRÉES, sans modifier le tenseur de l'appelant
     theta = model(xyt)                        # (N, 1)
     ones = torch.ones_like(theta)             # vecteur v du produit vecteur-jacobien
 
@@ -235,27 +237,34 @@ Toute modification de cette table doit être validée par le binôme puis report
 
 ## 10. État d'avancement (à mettre à jour à chaque fin de sprint, avec le walkthrough de § 5)
 
-**Dernière mise à jour :** 2026-09-16 — par : Claude (assistant IA), à valider par le binôme
+**Dernière mise à jour :** 2026-10-09 — par : Claude (assistant IA) pour A, à valider par le binôme
 
 | Sprint | Contenu | Statut |
 |---|---|---|
 | 0 | Setup dépôt, config, lecture articles | ◐ code fait (arborescence, `requirements.txt`, `src/config.py` + tests, `docs/lectures.md`). Reste : lecture des articles par A et B, protection de `main` sur GitHub (voir README) |
-| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ◐ A fait le 2026-09-16 (`docs/physics.md`, `geometry.py`, `sampling.py`, tests, `docs/walkthrough/walkthrough_sprint_1_A.md`) · B à faire (`fd_solver.py`, `test_fd.py`) |
-| 2 | PINN baseline [A] · Métriques, viz, evaluate [B] → **M1** | ☐ |
+| 1 | Adimensionnement, échantillonnage [A] · Solveur DF + tests [B] | ☑ A et B faits (walkthroughs `walkthrough_sprint_1_A.md` et `walkthrough_sprint_1_B.md`) |
+| 2 | PINN baseline [A] · Métriques, viz, evaluate [B] → **M1** | ◐ A fait le 2026-10-09 (`model.py`, `physics.py`, `train.py`, tests, entraînement baseline, `docs/walkthrough/walkthrough_sprint_2_A.md`) · B à faire (`metrics.py`, `viz.py`, `scripts/evaluate.py`, `results/baseline.md`) |
 | 3 | L-BFGS, hard constraints [A] · RAD, poids dynamiques, ablation [B] → **M2** | ☐ |
 | 4 | PINN paramétrique [A] · Gradio [B] → **M3** | ☐ |
 | 5 | Docs, slides, entraînement à l'oral | ☐ |
 | 6+ | Bonus (voir ROADMAP § 5) | ☐ |
 
-**Résultats actuels :** _(aucun, à remplir : config → erreur L2 rel. / MSE / temps)_
+**Résultats actuels :**
+
+- Baseline soft (Adam 20 000 it., points fixes, CPU 4 threads) : 7 181 s ; perte finale 1,33·10⁻², dont L_IC = 1,18·10⁻². Contrôle de cohérence de A contre le DF : erreur L2 rel. sur θ ≈ 0,35, erreur max 62 °C au centre à t = 0, bon accord après t ≈ 500 s. Chiffres officiels à produire par `metrics.py` (B). Détails : `walkthrough_sprint_2_A.md` § 9.
 
 **Décisions en attente :**
 
 - [ ] Forme par défaut de l'objet : disque (R = 0.1) ou pavé (côté 0.2) ? _Défaut provisoire dans `config.py` : disque, R = 0.1 (cas mesuré au § 2)._
 - [ ] Paramètres variables dans la démo : (R, cx, cy) ou seulement R ?
 - [ ] Densification de l'IC (choix de A, à valider par B) : 50 % des points IC tirés par rejet dans la bande |d − R| ≤ 3ε (`IC_EDGE_FRACTION`, `IC_EDGE_BAND_EPS`), τ uniforme pour la BC.
+- [ ] Sprint 2, choix de A à valider par B (détails : `walkthrough_sprint_2_A.md` § 8) : points de collocation fixes pendant Adam (baseline Raissi) ; `detach()` dans `pde_residual` ; historique des pertes à chaque itération dans le checkpoint ; `load_checkpoint` comme format commun.
+- [ ] **Échantillonnage IC du cœur de l'objet** (A, sprint 1) : seuls 0,9 % des points IC tombent dans le cœur (d < R − 3ε), d'où un dôme à θ = 2,04 (142 °C) au centre à t = 0. Proposition : tirer la famille « bord » dans d ≤ R + 3ε (≈ 700 points au cœur au lieu de 43), adapter le test, réentraîner (2 h). Preuve : `walkthrough_sprint_2_A.md` § 9.
+- [ ] Partage du checkpoint baseline : `checkpoints/` est ignoré par Git (sauf `demo_*.pt`). L'ajouter au dépôt (≈ 400 Ko) ou le régénérer chez B ?
 
 **Bloquants actuels :** _(aucun)_
+
+**Point d'attention :** un entraînement complet prend environ 2 h sur le CPU de A (i5-1240P, `OMP_NUM_THREADS=4`). L'ablation du sprint 3 (au moins 5 variantes) représente donc une dizaine d'heures : prévoir des runs de nuit, un GPU (Colab) ou des runs réduits pour comparer les variantes.
 
 ---
 

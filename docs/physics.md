@@ -115,8 +115,9 @@ Fonctions : `theta_to_celsius`, `celsius_to_theta` (`src/geometry.py`), `CFG.t_m
 
 ## 7. Ordres de grandeur
 
-Mesure faite avec un solveur DF de contrôle, disque $R = 0{,}1$ (ROADMAP § 0 ; à reconfirmer
-avec `src/fd_solver.py` au sprint 1) :
+Mesure faite avec un solveur DF de contrôle, disque $R = 0{,}1$ (ROADMAP § 0). **Reconfirmée au
+sprint 2 avec `src/fd_solver.py`** : $\theta_{max}$ vaut 0,222 à $t^* = 0{,}01$, 0,048 à $t^* = 0{,}05$
+et 0,017 à $t^* = 0{,}1$ ; à $t^* = 0{,}005$, il est encadré par 0,464 ($t^* = 0{,}004$) et 0,341 ($t^* = 0{,}006$).
 
 | $t^*$ | $\tau$ | $\theta_{max}$ | $T_{max}$ | temps réel |
 |---|---|---|---|---|

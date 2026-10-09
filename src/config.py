@@ -15,7 +15,7 @@ Conventions :
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
@@ -197,6 +197,39 @@ def set_seeds(seed: int = Config.SEED) -> None:
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)  # couvre aussi les générateurs CUDA s'il y a un GPU
+
+
+def config_to_dict(cfg: Config) -> dict:
+    """Champs de la config en types simples (str, nombres, tuples), pour les checkpoints.
+
+    Les chemins Path deviennent des str : torch.load(weights_only=True), le défaut depuis
+    torch 2.6, refuse de recharger des objets Python arbitraires comme Path.
+
+    Args:
+        cfg: configuration à sauvegarder.
+
+    Returns:
+        Dictionnaire {nom du champ: valeur}.
+    """
+    fields = asdict(cfg)
+    fields["CHECKPOINT_DIR"] = str(cfg.CHECKPOINT_DIR)
+    fields["RESULTS_DIR"] = str(cfg.RESULTS_DIR)
+    return fields
+
+
+def config_from_dict(fields: dict) -> Config:
+    """Reconstruit une Config depuis config_to_dict ; les garde-fous de __post_init__ s'appliquent.
+
+    Args:
+        fields: dictionnaire produit par config_to_dict, par exemple lu dans un checkpoint.
+
+    Returns:
+        Config identique à celle qui a été sauvegardée.
+    """
+    restored = dict(fields)  # copie : on ne modifie pas le dictionnaire de l'appelant
+    restored["CHECKPOINT_DIR"] = Path(restored["CHECKPOINT_DIR"])
+    restored["RESULTS_DIR"] = Path(restored["RESULTS_DIR"])
+    return Config(**restored)
 
 
 # Instance unique importée par tout le projet.
